@@ -1,0 +1,5 @@
+jwt_secret  =  "qxPZPPsw0AHBHRTNEiKpiDyydNmlRcrYRnoeYytU"
+admin_id = "e4fad5a2-b085-4664-a4e0-fa30217055e1"
+admin_email = "admin@email.com"
+admin_name = "Admin"
+admin_password = "$2y$10$NesuwVHn5CubmOZHwHQ/RexIgvxIr3vdEOlsHSAxaiWD6JO/OZFB6"
