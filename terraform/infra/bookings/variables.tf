@@ -10,3 +10,7 @@ variable "write_capacity" {
 variable "read_capacity" {
   default  =    "1"
 }
+
+variable "sns_notifications_arn" {
+  
+}

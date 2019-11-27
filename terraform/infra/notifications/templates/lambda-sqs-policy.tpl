@@ -17,14 +17,5 @@
             ],
             "Resource": "*"
     }
-    %{ if sns_topic != ""}
-    , {
-      "Action": [
-        "sns:Publish"
-      ],
-      "Effect": "Allow",
-      "Resource": "${sns_topic}"
-    }
-    %{ endif }
   ]
 } 
