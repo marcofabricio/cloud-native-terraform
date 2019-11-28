@@ -2,7 +2,7 @@ service: api
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
 
   stage: dev
   region: us-east-1
@@ -38,9 +38,9 @@ functions:
       DYNAMODB_BOOKINGS: ${ssm:${self:custom.stage}-dynamodb-bookings-table}
     events:
      - http:
-        path: bookings
-        method: post 
-        authorizer: authorizer
+         path: bookings
+         method: post
+         authorizer: authorizer
 
   list_bookings:
     role: ${ssm:${self:custom.stage}-list-bookings-iam-role}
@@ -49,15 +49,14 @@ functions:
       DYNAMODB_BOOKINGS: ${ssm:${self:custom.stage}-dynamodb-bookings-table}
     events:
      - http:
-        path: bookings
-        method: get 
-        authorizer: authorizer          
+         path: bookings
+         method: get
+         authorizer: authorizer
 
   authorizer:
     handler: authorizer/handler.authorizer
     environment:
       JWT_SECRET: ${ssm:${self:custom.stage}-jwt-secret}
          
-   
 custom:
   stage: ${opt:stage, self:provider.stage}

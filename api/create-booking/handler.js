@@ -1,4 +1,4 @@
-const AWS   =   require('aws-sdk')
+const AWS = require('aws-sdk')
 AWS.config.update({
     region: process.env.AWS_REGION
 })
@@ -18,6 +18,6 @@ module.exports.create = async event => {
     }).promise()
     return {
         statusCode: 200,
-        body: JSON.stringify({message: 'Agendamento efetuado com sucesso!'})
+        body: JSON.stringify({ message: 'Agendamento efetuado com sucesso!' })
     }
 }
