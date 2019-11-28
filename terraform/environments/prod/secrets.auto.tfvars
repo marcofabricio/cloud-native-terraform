@@ -1,4 +1,4 @@
-jwt_secret  =  "AFH2sLR3tC9nxFWMf2wDyvsjbvkG1Z7ybHCpdcyA4_g"
+jwt_secret  =  "X6_645XceQy5I4fTg64mOWQzxd7BPoQRXrqZZKV1EEo"
 admin_id    = "baced545-c672-479d-abff-323a73faw48e6"
 admin_email = "admin@email.com"
 admin_name  = "Admin Producao"
