@@ -5,4 +5,5 @@ resource "aws_iam_policy" "login_policy" {
     action   = "dynamodb:Query",
     resource = "${aws_dynamodb_table.users.arn}/index/${var.environment}-email-gsi"
   })
-}
+} 
+

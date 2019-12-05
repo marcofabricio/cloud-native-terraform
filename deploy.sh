@@ -1,6 +1,6 @@
 cd terraform/environments/$1
 
-terraform init && terraform apply -auto-approve
+terraform init && terraform apply -auto-approve 
 
 cd ../../../
 pwd

@@ -52,4 +52,4 @@ variable "sms_phone_from" {
 
 variable "sms_phone_to" {
 
-}
+} 
