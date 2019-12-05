@@ -1,8 +1,7 @@
 # Cloud Native com Terraform e Serverless Framework
 
 
-![AWS-DIAGRAM](aws-diagram.jpeg){:height="50%" width="50%"}
-
+<img src="aws-diagram.jpeg" width="400" height="350">
 
 ### Introdução
 
