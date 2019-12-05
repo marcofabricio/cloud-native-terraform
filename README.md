@@ -1,8 +1,7 @@
 # Cloud Native com Terraform e Serverless Framework
 
 
-![alt](https://drive.google.com/open?id=1C26glFNViSGZ7iV0dC_Voc9sdeK_4GPa)
-
+![AWS-DIAGRAM](aws-diagram.jpeg)
 
 
 ### Introdução
@@ -23,12 +22,8 @@ Antes de executar a POC é necessário que você possua:
 
 ## 1 - Clonar o repositório
 
-This is _italics_ and this is **bold**.
-
-Here's a configuration file with a label:
-
 ``` 
-git clone repositório
+git clone ssh://git@stash.endurance.com:7999/latamd/cloud-native-terraform-serverless.git
 ```
 
 
