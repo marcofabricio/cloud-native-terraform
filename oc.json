@@ -4,8 +4,10 @@
     "parameters": {},
     "variables": {
         "adminUserName": "azureuser",
-        "sshKeyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCfkQ8saXMVfOhaZWog+uJP9tkkHlPVVTL3i3MBakZYqHUTREaK1tDLux8z/9O152sKtFSaUuRH9l8TWPCZF8riVI14H5C92vJPTkTiNSP55WPpTtbXz7Wvd6CwkJFY2QTRjBc/k0bOoZoWY8C3bh+zKd9fVtcSZUk9eim5HcwDpWC8QGnM6MzhMWHpRFrsCCI1oCapey0V5iGow2G78pOIvLMNWXleBFafZSHaIL4MIp53pjzLn8XM1LhsxnbFqacy/RJg1p3y8L0iyb7L1uHyk2rtSo8mEHoYzRiDv7Jw5bI0E21v5FFHg6zk/R+SltHoJ7CSpR3CcpseOJqF marco@cc-e00647e8-57945d9b9b-qfzkk",
+        "sshKeyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqSNF0x69M598PLh7O1GXg968262Lu0lBnzimZ5Bv2ugwaYv3Cti4/Gkh+dbz39HJlGouwnPV5pGA0bO9lZ6cD0UrDjyqnPatoZ6fyIhMwIPufqrXJlHttu6Bwh1wfATCl3LBsGAWhZwH4mERXXtSeBRRmDUeTKDZaMUIFvMOFdWgMJWhoQxnWOxPzwxZfUt9EzxzcKzb6xkrZLR7Zn3gk0kPXCIll/94JJt5u19T6PEFDRpwOhMdeO3+BgBw1KMiA8O2rq2xiZwP5kZuH6m3OrgpwSio7/iCUYXlK3SmDUi3Z2d2BNPuMHZlaXDLlSGYfR/mJhwptPwvFJ8B7m0t/",
         "sshKeyPath": "[concat('/home/', variables('adminUsername'),'/.ssh/authorized_keys')]",
+        "storageAccountName": "[toLower( concat( 'azurelalab', uniqueString(resourceGroup().id) ))]",
+        "storeageAccountpersistentVolume1": "[concat('pv1sa', uniqueString(concat(resourceGroup().id, 'persistentvolume1')))]",
         "networkSecurityGroupName": "shared-nsg",
 		"imageRef": {
 			"publisher": "Openlogic",
@@ -17,11 +19,7 @@
             "name": "openshift-vnet",
             "addressSpacePrefix": "10.10.0.0/16",
             "masterSubnet": "master-subnet",
-            "masterSubnetPrefix": "10.10.1.0/24",
-            "infraSubnet": "infra-subnet",
-            "infraSubnetPrefix": "10.10.2.0/24",
-            "appnodeSubnet": "appnode-subnet",
-            "appnodeSubnetPrefix": "10.10.3.0/24"
+            "masterSubnetPrefix": "10.10.1.0/24"
         },
         "masterVM": {
             "name": "masterVM-0",
@@ -29,7 +27,9 @@
             "dataDiskSize": 32,
             "nicName": "masterVM-nic1",
             "pubIpName": "masterVM-pip1",
-            "pubIpType": "Dynamic"
+            "pubIpType": "Dynamic",
+            "privateIPAddress": "10.10.1.10",
+            "privateIPAllocationMethod": "Static"
         },
         "infraVM": {
             "name": "infraVM-0",
@@ -37,7 +37,9 @@
             "dataDiskSize": 32,
             "nicName": "infraVM-nic1",
             "pubIpName": "infraVM-pip1",
-            "pubIpType": "Dynamic"
+            "pubIpType": "Dynamic",
+            "privateIPAddress": "10.10.1.11",
+            "privateIPAllocationMethod": "Static"
         },
         "appnodeVM": {
             "name": "appnodeVM-0",
@@ -45,14 +47,18 @@
             "dataDiskSize": 32,
             "nicName": "appnodeVM-nic1",
             "pubIpName": "appnodeVM-pip1",
-            "pubIpType": "Dynamic"
+            "pubIpType": "Dynamic",
+            "privateIPAddress": "10.10.1.12",
+            "privateIPAllocationMethod": "Static"
         } ,
         "bastionVM": {
             "name": "bastionVM-0",
             "vmSize": "Standard_B1ms",
             "nicName": "bastionVM-nic1",
             "pubIpName": "bastionVM-pip1",
-            "pubIpType": "Dynamic"
+            "pubIpType": "Dynamic",
+            "privateIPAddress": "10.10.1.13",
+            "privateIPAllocationMethod": "Static"
         }
     },
     "resources": [
@@ -75,24 +81,6 @@
                         "name": "[variables('vNet1').masterSubnet]",
                         "properties": {
                             "addressPrefix": "[variables('vNet1').masterSubnetPrefix]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('vNet1').infraSubnet]",
-                        "properties": {
-                            "addressPrefix": "[variables('vNet1').infraSubnetPrefix]",
-                            "networkSecurityGroup": {
-                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
-                            }
-                        }
-                    },
-                    {
-                        "name": "[variables('vNet1').appnodeSubnet]",
-                        "properties": {
-                            "addressPrefix": "[variables('vNet1').appnodeSubnetPrefix]",
                             "networkSecurityGroup": {
                                 "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
                             }
@@ -198,7 +186,8 @@
                 {
                   "name": "ipconfig1",
                   "properties": {
-                    "privateIPAllocationMethod": "Dynamic",
+                    "privateIPAllocationMethod": "Static",
+                    "privateIPAddress": "10.10.1.10",
                     "publicIPAddress": {
                       "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('masterVM').pubIpName)]"
                     },
@@ -224,12 +213,13 @@
                 {
                   "name": "ipconfig1",
                   "properties": {
-                    "privateIPAllocationMethod": "Dynamic",
+                    "privateIPAllocationMethod": "Static",
+                    "privateIPAddress": "10.10.1.11",
                     "publicIPAddress": {
                       "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('infraVM').pubIpName)]"
                     },
                     "subnet": {
-                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet1').name, variables('vnet1').infraSubnet)]"
+                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet1').name, variables('vnet1').masterSubnet)]"
                     }
                   }
                 }
@@ -250,12 +240,13 @@
                 {
                   "name": "ipconfig1",
                   "properties": {
-                    "privateIPAllocationMethod": "Dynamic",
+                    "privateIPAllocationMethod": "Static",
+                    "privateIPAddress": "10.10.1.12",
                     "publicIPAddress": {
                       "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('appnodeVM').pubIpName)]"
                     },
                     "subnet": {
-                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet1').name, variables('vnet1').appnodeSubnet)]"
+                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet1').name, variables('vnet1').masterSubnet)]"
                     }
                   }
                 }
@@ -276,12 +267,13 @@
                 {
                   "name": "ipconfig1",
                   "properties": {
-                    "privateIPAllocationMethod": "Dynamic",
+                    "privateIPAllocationMethod": "Static",
+                    "privateIPAddress": "10.10.1.13",
                     "publicIPAddress": {
                       "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('bastionVM').pubIpName)]"
                     },
                     "subnet": {
-                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet1').name, variables('vnet1').infraSubnet)]"
+                      "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnet1').name, variables('vnet1').masterSubnet)]"
                     }
                   }
                 }
@@ -290,7 +282,7 @@
         },
 
         {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2019-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('masterVM').name]",
             "location": "[resourceGroup().location]",
@@ -319,22 +311,9 @@
               },
               "storageProfile": {
                 "imageReference": {
-                  "publisher": "[variables('imageRef').publisher]",
-                  "offer": "[variables('imageRef').offer]",
-                  "sku": "[variables('imageRef').sku]",
-                  "version": "[variables('imageRef').version]"
-                },
-                "osDisk": {
-                  "createOption": "FromImage"
-                },
-                "dataDisks": [
-                    {
-                        "diskSizeGB": "[variables('masterVM').dataDiskSize]",
-                        "lun": 0,
-                        "createOption": "Empty"
-                    }
-                ]
-              },
+                    "id": "[variables('customImageResourceId2')]"
+                }
+            },
               "networkProfile": {
                 "networkInterfaces": [
                   {
@@ -351,7 +330,7 @@
             }
           },
           {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2019-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('infraVM').name]",
             "location": "[resourceGroup().location]",
@@ -380,22 +359,9 @@
               },
               "storageProfile": {
                 "imageReference": {
-                    "publisher": "[variables('imageRef').publisher]",
-                    "offer": "[variables('imageRef').offer]",
-                    "sku": "[variables('imageRef').sku]",
-                    "version": "[variables('imageRef').version]"
-                },
-                "osDisk": {
-                  "createOption": "FromImage"
-                },
-                "dataDisks": [
-                    {
-                        "diskSizeGB": "[variables('infraVM').dataDiskSize]",
-                        "lun": 0,
-                        "createOption": "Empty"
-                    }
-                ]
-              },
+                    "id": "[variables('customImageResourceId3')]"
+                }
+            },
               "networkProfile": {
                 "networkInterfaces": [
                   {
@@ -413,7 +379,7 @@
           },
 
           {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2019-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('appnodeVM').name]",
             "location": "[resourceGroup().location]",
@@ -442,22 +408,9 @@
               },
               "storageProfile": {
                 "imageReference": {
-                    "publisher": "[variables('imageRef').publisher]",
-                    "offer": "[variables('imageRef').offer]",
-                    "sku": "[variables('imageRef').sku]",
-                    "version": "[variables('imageRef').version]"
-                },
-                "osDisk": {
-                  "createOption": "FromImage"
-                },
-                "dataDisks": [
-                    {
-                        "diskSizeGB": "[variables('appnodeVM').dataDiskSize]",
-                        "lun": 0,
-                        "createOption": "Empty"
-                    }
-                ]
-              },
+                    "id": "[variables('customImageResourceId4')]"
+                }
+            },
               "networkProfile": {
                 "networkInterfaces": [
                   {
@@ -474,7 +427,7 @@
             }
           },
           {
-            "apiVersion": "2017-03-30",
+            "apiVersion": "2019-03-01",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[variables('bastionVM').name]",
             "location": "[resourceGroup().location]",
@@ -503,15 +456,9 @@
               },
               "storageProfile": {
                 "imageReference": {
-                    "publisher": "[variables('imageRef').publisher]",
-                    "offer": "[variables('imageRef').offer]",
-                    "sku": "[variables('imageRef').sku]",
-                    "version": "[variables('imageRef').version]"
-                },
-                "osDisk": {
-                  "createOption": "FromImage"
+                    "id": "[variables('customImageResourceId1')]"
                 }
-              },
+            },
               "networkProfile": {
                 "networkInterfaces": [
                   {
